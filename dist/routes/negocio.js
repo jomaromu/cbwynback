@@ -120,7 +120,8 @@ negocio.get('/obtenerTodos', (req, resp) => {
 // ==================================================================== //
 negocio.get('/getMultimediaAll', (req, resp) => {
     const pathPipe = req.query.multi;
-    const multimedia = path_1.default.resolve(`../dist/${pathPipe}`);
+    // const multimedia = path.resolve(`../dist/${pathPipe}`);
+    const multimedia = path_1.default.resolve(__dirname, `../${pathPipe}`);
     return resp.sendFile(multimedia);
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
@@ -164,7 +165,7 @@ negocio.delete('/eliminarNegocio', (req, resp) => {
     const idUsuario = req.get('idUsuario');
     const pathNegocioDB = req.get('pathNegocio');
     const pathNegocio = path_1.default.resolve(__dirname, `../uploads/${idUsuario}/${pathNegocioDB}`);
-    console.log(idNegocio, idUsuario, pathNegocioDB);
+    // console.log(idNegocio, idUsuario, pathNegocioDB);
     // verificar si el usuario tiene archivos en uploads y borrarlos si los encuentra
     const promesaBorarArchivos = new Promise((resolve, reject) => {
         if (fs_1.default.existsSync(pathNegocio)) {
