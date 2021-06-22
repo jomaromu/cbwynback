@@ -3,9 +3,11 @@ import { Error, Query } from 'mongoose';
 import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
+import moment from 'moment';
 
 // esquemas - modelo
 import Negocio from '../models/negocio';
+import Favorito from '../models/favorito';
 import NegocioClass from '../classes/negocio';
 
 // metodos
@@ -23,6 +25,7 @@ const negocioClass = new NegocioClass;
 negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
 
     const rutas = await negocioClass.transformaImgs(req.files, req.body.usuario);
+    const fecha = moment().format('l');
 
     const nuevoNegocio = new Negocio({
         nombre: req.body.nombre,
@@ -47,7 +50,8 @@ negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
         usuario: req.body.usuario,
         rutaNegocio: rutas.rutaNegocio,
         rutaUsuario: rutas.rutaUsuario,
-        rutaCorta: rutas.rutanegocioCorta
+        rutaCorta: rutas.rutanegocioCorta,
+        fechaAlta: fecha
     });
 
     // guardar el negocio
@@ -226,4 +230,114 @@ negocio.put('/editarNegocio', async (req: Request, resp: Response) => {
         });
     }
 });
-export default negocio; 
+
+// ==================================================================== //
+// Buscar favorito
+// ==================================================================== //
+negocio.post('/buscarFavorito', (req: Request, resp: Response) => {
+
+    const idUsuario = req.body.idUsuario;
+    const idNegocio = req.body.idNegocio;
+
+    Favorito.findOne({ usuario: idUsuario, negocio: idNegocio }, (err: Error, favoritoDB: Query<any, any>) => {
+
+        // error al buscar favorito
+        if (err) {
+            return resp.json({
+                ok: false,
+                mensaje: 'Error al buscar favorito',
+                err
+            });
+        }
+
+        // si no existe, crear favorito
+        if (!favoritoDB) {
+            return resp.json({
+                ok: true,
+                existe: false,
+                mensaje: 'No existe un favorito'
+            });
+        }
+
+        // si existe remover favorito
+        return resp.json({
+            ok: true,
+            existe: true,
+            mensaje: 'ya existe un favorito'
+        });
+    });
+});
+
+// ==================================================================== //
+// Crear favorito
+// ==================================================================== //
+negocio.post('/crearFavorito', (req: Request, resp: Response) => {
+
+    const idUsuario = req.body.idUsuario;
+    const idNegocio = req.body.idNegocio;
+
+    const favorito = new Favorito({
+        usuario: idUsuario,
+        negocio: idNegocio
+    });
+
+    // guardar registro favorito
+    const registrarFavorito = new Promise((resolve, reject) => {
+        favorito.save((err, favoritoDB) => {
+
+            if (err) {
+                reject('Error al crear favorito');
+            } else {
+                resolve('Favorito creado');
+            }
+        });
+    });
+
+    // actualizar los favoritos en el negocio
+    const actualizarFavoritoNegocio = new Promise(async (resolve, reject) => {
+        const query = {
+            _id: idNegocio,
+        }
+
+        const nuevoFavorito = await Negocio.findOneAndUpdate(query, { $push: { favorito: idUsuario } });
+
+        if (!nuevoFavorito) {
+            reject('No se pudo actualizar el negocio favorito');
+        } else {
+            resolve('Favorito agregado al negocio');
+        }
+    });
+
+    Promise.all([registrarFavorito, actualizarFavoritoNegocio])
+        .then(respuesta => {
+            resp.json({
+                ok: true,
+                mensaje: respuesta
+            });
+        }).catch(error => {
+            resp.json({
+                ok: false,
+                mensaje: error
+            });
+        });
+});
+
+// ==================================================================== //
+// Eliminar favorito
+// ==================================================================== //
+negocio.delete('/eliminarFavorito', async (req: Request, resp: Response) => {
+
+    const idUsuario = req.get('idUsuario')
+    const idNegocio = req.get('idNegocio');
+
+    /*crear dos promesas
+    1. eliminar favorito
+    2. sacar del array de negocios el favorito  */
+
+    const borrado = await Favorito.deleteOne({ usuario: idUsuario, negocio: idNegocio });
+
+    return resp.json({
+        ok: borrado.ok,
+    });
+});
+export default negocio;

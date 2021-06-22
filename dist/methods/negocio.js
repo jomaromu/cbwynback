@@ -7,9 +7,9 @@ const negocio_1 = __importDefault(require("../models/negocio"));
 // criterios de busqueda
 const filtroBusqueda = (ubicacion, categoria, cantidad, req, resp) => {
     console.log('cantidad: ' + cantidad, 'ubicacion: ' + ubicacion, 'categoria: ' + categoria);
-    let nuevaCant = cantidad;
     let nuevaUb = ubicacion;
-    let nuevaCat = ubicacion;
+    let nuevaCat = categoria;
+    let nuevaCant = cantidad;
     let inicioCant = 0;
     let finCant = 0;
     // caso cantidad
@@ -166,6 +166,25 @@ const filtroBusqueda = (ubicacion, categoria, cantidad, req, resp) => {
     // 7. cuando no viene ninguno
     if (!nuevaUb && !nuevaCant && !nuevaCat) {
         negocio_1.default.find({}, (err, negocioDB) => {
+            if (err) {
+                return resp.json({
+                    ok: false,
+                    mensaje: `Error al búscar negocios`,
+                    err
+                });
+            }
+            else {
+                return resp.json({
+                    ok: true,
+                    mensaje: `Búsqueda correcta`,
+                    negocioDB
+                });
+            }
+        });
+    }
+    // 7. cuando vienen todos
+    if (nuevaUb && nuevaCant && nuevaCat) {
+        negocio_1.default.find({ $and: [{ 'ubicacion': nuevaUb, 'categoria': nuevaCat }, { $and: [{ 'monto': { $gte: inicioCant, $lte: finCant } }] }] }, (err, negocioDB) => {
             if (err) {
                 return resp.json({
                     ok: false,

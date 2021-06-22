@@ -35,8 +35,10 @@ const express_1 = require("express");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const rimraf_1 = __importDefault(require("rimraf"));
+const moment_1 = __importDefault(require("moment"));
 // esquemas - modelo
 const negocio_1 = __importDefault(require("../models/negocio"));
+const favorito_1 = __importDefault(require("../models/favorito"));
 const negocio_2 = __importDefault(require("../classes/negocio"));
 // metodos
 const filtros = __importStar(require("../methods/negocio"));
@@ -49,6 +51,7 @@ const negocioClass = new negocio_2.default;
 // ==================================================================== //
 negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const rutas = yield negocioClass.transformaImgs(req.files, req.body.usuario);
+    const fecha = moment_1.default().format('l');
     const nuevoNegocio = new negocio_1.default({
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
@@ -72,7 +75,8 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
         usuario: req.body.usuario,
         rutaNegocio: rutas.rutaNegocio,
         rutaUsuario: rutas.rutaUsuario,
-        rutaCorta: rutas.rutanegocioCorta
+        rutaCorta: rutas.rutanegocioCorta,
+        fechaAlta: fecha
     });
     // guardar el negocio
     nuevoNegocio.save((err, negocioDB) => {
@@ -228,5 +232,97 @@ negocio.put('/editarNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
             mensaje: `Negocio actualizado`
         });
     }
+}));
+// ==================================================================== //
+// Buscar favorito
+// ==================================================================== //
+negocio.post('/buscarFavorito', (req, resp) => {
+    const idUsuario = req.body.idUsuario;
+    const idNegocio = req.body.idNegocio;
+    favorito_1.default.findOne({ usuario: idUsuario, negocio: idNegocio }, (err, favoritoDB) => {
+        // error al buscar favorito
+        if (err) {
+            return resp.json({
+                ok: false,
+                mensaje: 'Error al buscar favorito',
+                err
+            });
+        }
+        // si no existe, crear favorito
+        if (!favoritoDB) {
+            return resp.json({
+                ok: true,
+                existe: false,
+                mensaje: 'No existe un favorito'
+            });
+        }
+        // si existe remover favorito
+        return resp.json({
+            ok: true,
+            existe: true,
+            mensaje: 'ya existe un favorito'
+        });
+    });
+});
+// ==================================================================== //
+// Crear favorito
+// ==================================================================== //
+negocio.post('/crearFavorito', (req, resp) => {
+    const idUsuario = req.body.idUsuario;
+    const idNegocio = req.body.idNegocio;
+    const favorito = new favorito_1.default({
+        usuario: idUsuario,
+        negocio: idNegocio
+    });
+    // guardar registro favorito
+    const registrarFavorito = new Promise((resolve, reject) => {
+        favorito.save((err, favoritoDB) => {
+            if (err) {
+                reject('Error al crear favorito');
+            }
+            else {
+                resolve('Favorito creado');
+            }
+        });
+    });
+    // actualizar los favoritos en el negocio
+    const actualizarFavoritoNegocio = new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        const query = {
+            _id: idNegocio,
+        };
+        const nuevoFavorito = yield negocio_1.default.findOneAndUpdate(query, { $push: { favorito: idUsuario } });
+        if (!nuevoFavorito) {
+            reject('No se pudo actualizar el negocio favorito');
+        }
+        else {
+            resolve('Favorito agregado al negocio');
+        }
+    }));
+    Promise.all([registrarFavorito, actualizarFavoritoNegocio])
+        .then(respuesta => {
+        resp.json({
+            ok: true,
+            mensaje: respuesta
+        });
+    }).catch(error => {
+        resp.json({
+            ok: false,
+            mensaje: error
+        });
+    });
+});
+// ==================================================================== //
+// Eliminar favorito
+// ==================================================================== //
+negocio.delete('/eliminarFavorito', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
+    const idUsuario = req.get('idUsuario');
+    const idNegocio = req.get('idNegocio');
+    /*crear dos promesas
+    1. eliminar favorito
+    2. sacar del array de negocios el favorito  */
+    const borrado = yield favorito_1.default.deleteOne({ usuario: idUsuario, negocio: idNegocio });
+    return resp.json({
+        ok: borrado.ok,
+    });
 }));
 exports.default = negocio;
