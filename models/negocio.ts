@@ -30,7 +30,6 @@ const neogcioSchema = new Schema({
     rutaUsuario: { type: String },
     rutaCorta: { type: String },
     fechaAlta: { type: String },
-    favorito: { type: Array }
 });
 
 export = mongoose.model('Negocio', neogcioSchema);

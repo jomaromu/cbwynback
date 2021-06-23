@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, response } from 'express';
 import { Error, Query } from 'mongoose';
 import path from 'path';
 import fs from 'fs';
@@ -232,6 +232,31 @@ negocio.put('/editarNegocio', async (req: Request, resp: Response) => {
 });
 
 // ==================================================================== //
+// Obtener favoritos
+// ==================================================================== //
+negocio.get('/obtenerFavoritos', (req: Request, resp: Response) => {
+
+    const idUsuario = req.get('idUsuario');
+
+    Favorito.find({ usuario: idUsuario }, (err: Error, favoritosDB: Query<any, any>) => {
+
+        if (err) {
+            resp.json({
+                ok: false,
+                mensaje: 'Error al buscar favoritos',
+                err
+            });
+        } else {
+            resp.json({
+                ok: true,
+                mensaje: 'Existe(en) favorito(s) en la obtencion de favoritos',
+                favoritosDB
+            });
+        }
+    });
+});
+
+// ==================================================================== //
 // Buscar favorito
 // ==================================================================== //
 negocio.post('/buscarFavorito', (req: Request, resp: Response) => {
@@ -294,21 +319,21 @@ negocio.post('/crearFavorito', (req: Request, resp: Response) => {
     });
 
     // actualizar los favoritos en el negocio
-    const actualizarFavoritoNegocio = new Promise(async (resolve, reject) => {
-        const query = {
-            _id: idNegocio,
-        }
+    // const actualizarFavoritoNegocio = new Promise(async (resolve, reject) => {
+    //     const query = {
+    //         _id: idNegocio,
+    //     }
 
-        const nuevoFavorito = await Negocio.findOneAndUpdate(query, { $push: { favorito: idUsuario } });
+    //     const nuevoFavorito = await Negocio.findOneAndUpdate(query, { $push: { favorito: { idUsuario: idUsuario, idNegocio: idNegocio } } });
 
-        if (!nuevoFavorito) {
-            reject('No se pudo actualizar el negocio favorito');
-        } else {
-            resolve('Favorito agregado al negocio');
-        }
-    });
+    //     if (!nuevoFavorito) {
+    //         reject('No se pudo actualizar el negocio favorito');
+    //     } else {
+    //         resolve('Favorito agregado al negocio');
+    //     }
+    // });
 
-    Promise.all([registrarFavorito, actualizarFavoritoNegocio])
+    Promise.all([registrarFavorito])
         .then(respuesta => {
             resp.json({
                 ok: true,
@@ -334,10 +359,29 @@ negocio.delete('/eliminarFavorito', async (req: Request, resp: Response) => {
     1. eliminar favorito
     2. sacar del array de negocios el favorito  */
 
-    const borrado = await Favorito.deleteOne({ usuario: idUsuario, negocio: idNegocio });
-
-    return resp.json({
-        ok: borrado.ok,
+    const borrarFavorito = new Promise(async (resolve, reject) => {
+        const borrado = await Favorito.deleteOne({ usuario: idUsuario, negocio: idNegocio });
+        resolve(borrado);
     });
+
+    // const eliminarIdUsuario = new Promise(async (resolve, reject) => {
+    //     const actualizdo = await Negocio.findByIdAndUpdate({ _id: idNegocio }, { $pull: { 'favorito': idUsuario } }, { new: true });
+    //     resolve(actualizdo);
+    // });
+
+    Promise.all([borrarFavorito])
+        .then(data => {
+            resp.json({
+                ok: true,
+                mensaje: 'Favorito borrado',
+                data
+            });
+        }).catch(error => {
+            resp.json({
+                ok: false,
+                mensaje: 'No se pudo borrar el favorito',
+                error
+            });
+        })
 });
 export default negocio;

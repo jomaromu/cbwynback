@@ -31,6 +31,5 @@ const neogcioSchema = new Schema({
     rutaUsuario: { type: String },
     rutaCorta: { type: String },
     fechaAlta: { type: String },
-    favorito: { type: Array }
 });
 module.exports = mongoose_1.default.model('Negocio', neogcioSchema);
