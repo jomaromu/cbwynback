@@ -11,6 +11,7 @@ import { objetoEnviroment } from './global/enviroment';
 import routerPrincipal from './routes/rutaPrincipal';
 import usuario from './routes/usuario';
 import negocio from './routes/negocio';
+import visa from './routes/visa';
 
 // instancia del servidor 
 const server = new Server;
@@ -39,9 +40,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/cbyDB', { useNewUrlParser: true, use
 });
  
 // usar las rutas
-server.app.use('/', routerPrincipal); 
+server.app.use('/', routerPrincipal);
 server.app.use('/usuario', usuario);
 server.app.use('/negocio', negocio);
+server.app.use('/visa', visa);
 
 // correr el servidor
 server.start(() => {

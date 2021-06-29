@@ -13,6 +13,7 @@ const enviroment_1 = require("./global/enviroment");
 const rutaPrincipal_1 = __importDefault(require("./routes/rutaPrincipal"));
 const usuario_1 = __importDefault(require("./routes/usuario"));
 const negocio_1 = __importDefault(require("./routes/negocio"));
+const visa_1 = __importDefault(require("./routes/visa"));
 // instancia del servidor 
 const server = new server_1.default;
 // body parser
@@ -38,6 +39,7 @@ mongoose_1.default.connect('mongodb://127.0.0.1:27017/cbyDB', { useNewUrlParser:
 server.app.use('/', rutaPrincipal_1.default);
 server.app.use('/usuario', usuario_1.default);
 server.app.use('/negocio', negocio_1.default);
+server.app.use('/visa', visa_1.default);
 // correr el servidor
 server.start(() => {
     console.log(`Servidor corriendo en el puerto: ${enviroment_1.objetoEnviroment.port}`);
