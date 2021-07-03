@@ -4,6 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
 import moment from 'moment';
+import { createTransport } from 'nodemailer';
+const hbs = require('nodemailer-express-handlebars');
 
 // esquemas - modelo
 import Negocio from '../models/negocio';
@@ -110,8 +112,8 @@ negocio.get('/getMultimediaAll', (req: Request, resp: Response) => {
 
     const pathPipe = req.query.multi;
 
-    // const multimedia = path.resolve(`../dist/${pathPipe}`);
-    const multimedia = path.resolve(__dirname, `../${pathPipe}`);
+    const multimedia = path.resolve(`../uploads/${pathPipe}`);
+    // const multimedia = path.resolve(__dirname, `../${pathPipe}`);
     return resp.sendFile(multimedia);
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
@@ -318,21 +320,6 @@ negocio.post('/crearFavorito', (req: Request, resp: Response) => {
         });
     });
 
-    // actualizar los favoritos en el negocio
-    // const actualizarFavoritoNegocio = new Promise(async (resolve, reject) => {
-    //     const query = {
-    //         _id: idNegocio,
-    //     }
-
-    //     const nuevoFavorito = await Negocio.findOneAndUpdate(query, { $push: { favorito: { idUsuario: idUsuario, idNegocio: idNegocio } } });
-
-    //     if (!nuevoFavorito) {
-    //         reject('No se pudo actualizar el negocio favorito');
-    //     } else {
-    //         resolve('Favorito agregado al negocio');
-    //     }
-    // });
-
     Promise.all([registrarFavorito])
         .then(respuesta => {
             resp.json({
@@ -383,5 +370,186 @@ negocio.delete('/eliminarFavorito', async (req: Request, resp: Response) => {
                 error
             });
         })
+});
+
+// ==================================================================== //
+// obtener docs
+// ==================================================================== // 
+negocio.get('/obtenerDoc', (req: Request, resp: Response) => {
+
+    // const negocio: any = req.get('algo');
+
+    // const partsNegocio = negocio.split('\\');
+    // const rutaNegocio = `${partsNegocio[partsNegocio.length - 2]}/${partsNegocio[partsNegocio.length - 1]}`;
+    // const rutaFinal = path.resolve(__dirname, `../uploads/${rutaNegocio}`);
+
+    return resp.sendFile(path.resolve(__dirname, '../uploads/60d1663712320f655cd36aa9/60d1663712320f655cd36aa9-453/docs.docx'));
+
+});
+
+// ==================================================================== //
+// correo de compra de contacto a negocio
+// ==================================================================== // 
+negocio.post('/contactoNegocio', (req: Request, resp: Response) => {
+
+    /* 
+    1. buscar el negocio basado en el id
+    2. buscar su docs[0]
+    3. separar la ruta
+    4. buscar la ruta
+    5. agregarla al correo
+    6. hacer verificaciones tanto en path como en req.body
+     */
+
+    // const objetoCorreo = {
+    //     from: req.body.correo,
+    //     nombre: req.body.nombre,
+    //     mensaje: req.body.mensaje
+    // }
+
+    // return;
+    const objetoCorreo = {
+        from: 'algo@algo.com',
+        nombre: 'Johnny',
+        mensaje: 'Mensaje de prueba'
+    }
+
+    const transp = createTransport({
+        host: "smtp.titan.email",
+        port: 465,
+        secure: true, // use TLS
+        auth: {
+            user: "noreply@cbwyn.com",
+            pass: "noreply2021"
+        }, tls: {
+            // do not fail on invalid certs
+            rejectUnauthorized: false
+        },
+    });
+
+    const options = {
+        viewEngine: {
+            extname: '.handlebars', // handlebars extension
+            layoutsDir: '../dist/views/', // location of handlebars templates
+            defaultLayout: 'negocio', // name of main template
+            partialsDir: '../dist/views/', // location of your subtemplates aka. header, footer etc
+        },
+        viewPath: '../dist/views/',
+        extName: '.handlebars',
+    };
+
+    transp.use('compile', hbs(options));
+
+    const mailOptions = {
+        from: `noreply@cbwyn.com`,
+        to: 'jomaromu2@gmail.com',
+        cc: 'jroserodev@gmail.com',
+        subject: `Facturación cbwyn`,
+        template: 'negocio',
+        context: {
+            correo: 'algo@algo.com',
+            fecha: '02/07/2021',
+        },
+        attachments: [
+            { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+            { filename: 'facebook.png', path: '../dist/assets/facebook.png', cid: 'facebook' },
+            { filename: 'instagram.gif', path: '../dist/assets/instagram.gif', cid: 'instagram' },
+            { filename: 'twitter.png', path: '../dist/assets/twitter.png', cid: 'twitter' },
+            // { filename: 'docs.docx', path: 'http://localhost:3000/negocio/obtenerDoc/?idNegocio='1234556', cid: 'docsLegales' },
+            { filename: 'docs.docx', path: 'https://google.com', cid: 'docsLegales' },
+        ]
+    }
+
+    transp.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.log(err);
+            resp.json({
+                ok: false,
+                mensaje: 'Correo no enviado',
+                err
+            });
+        } else {
+            console.log(info);
+            resp.json({
+                ok: true,
+                mensaje: 'Correo enviado',
+                info
+            });
+        }
+    });
+});
+
+// ==================================================================== //
+// mensaje de la plataforma
+// ==================================================================== // 
+negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
+
+    const objetoCorreo = {
+        nombre: req.body.nombre,
+        correo: req.body.correo,
+        mensaje: req.body.mensaje
+    }
+
+    console.log(objetoCorreo);
+
+    const transp = createTransport({
+        host: "smtp.titan.email",
+        port: 465,
+        secure: true, // use TLS
+        auth: {
+            user: "noreply@cbwyn.com",
+            pass: "noreply2021"
+        }, tls: {
+            // do not fail on invalid certs
+            rejectUnauthorized: false
+        },
+    });
+
+    const options = {
+        viewEngine: {
+            extname: '.handlebars', // handlebars extension
+            layoutsDir: '../dist/views/', // location of handlebars templates
+            defaultLayout: 'contacto', // name of main template
+            partialsDir: '../dist/views/', // location of your subtemplates aka. header, footer etc
+        },
+        viewPath: '../dist/views/',
+        extName: '.handlebars',
+    };
+
+    transp.use('compile', hbs(options));
+
+    const mailOptions = {
+        from: `noreply@cbwyn.com`,
+        // to: 'info@cbwyn.com',
+        cc: 'jroserodev@gmail.com',
+        subject: `Mensaje desde cbwyn`,
+        template: 'contacto',
+        context: {
+            nombre: objetoCorreo.nombre,
+            correo: objetoCorreo.correo,
+            mensaje: objetoCorreo.mensaje,
+        },
+        attachments: [
+            { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+        ]
+    }
+
+    transp.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.log(err);
+            resp.json({
+                ok: false,
+                mensaje: 'Correo no enviado',
+                err
+            });
+        } else {
+            console.log(info);
+            resp.json({
+                ok: true,
+                mensaje: 'Correo enviado',
+                info
+            });
+        }
+    });
 });
 export default negocio;

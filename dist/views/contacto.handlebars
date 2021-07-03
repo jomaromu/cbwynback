@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correo Negocio</title>
+
+    <style>
+        @media screen and (max-width: 992px) {
+            div#wrapNegocio {
+                width: 90%;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            img#imgLogo {
+                width: 120px;
+            }
+
+        }
+
+        @media screen and (max-width: 480px) {
+            div#wrapNegocio {
+                width: 100%;
+            }
+
+        }
+
+        div,
+        h4,
+        h5,
+        p,
+        table {
+            width: 100%;
+            /* display: block; */
+            font-family: sans-serif, Arial;
+        }
+
+        #wrapNegocio {
+            /* border: 1px solid blue; */
+            margin: 100px auto;
+            width: 60%;
+        }
+
+        #divLogo {
+            /* border: 1px solid red; */
+            display: block;
+            width: 100%;
+        }
+
+        #imgLogo {
+            width: 150px;
+            display: block;
+            margin: auto;
+        }
+
+        #txtTitulo {
+            text-align: center;
+            font-size: 1.7rem;
+            color: #09add0;
+        }
+
+        #txtTituloFactura {
+            color: #484f56;
+            font-size: 1.4rem;
+        }
+
+        table {
+            background-color: rgb(33, 37, 41);
+            /* padding: 10px; */
+        }
+
+        tr {
+            color: rgb(231, 231, 231);
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 200;
+        }
+
+        th,
+        td {
+            border: 1px solid rgb(112, 112, 112);
+            padding: 10px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapNegocio">
+        <div id="divLogo">
+            <img id="imgLogo" src="cid:logo" alt="Logo">
+        </div>
+        <h5 id="txtTitulo">Conectando <span style="color: #484f56;"> negocios </span></h5>
+        <h4 id="txtTituloFactura">Consulta desde el formulario</h4>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Nombre</th>
+                    <td>
+                        {{nombre}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Correo</th>
+                    <td>
+                        {{correo}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Mensaje</th>
+                    <td>{{mensaje}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</body>
+
+</html>

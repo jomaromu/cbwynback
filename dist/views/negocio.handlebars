@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correo Negocio</title>
+
+    <style>
+        * {
+            /* border: 1px solid black; */
+        }
+
+        @media screen and (max-width: 992px) {
+            div#wrapNegocio {
+                width: 90%;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            img#imgLogo {
+                width: 120px;
+            }
+
+        }
+
+        @media screen and (max-width: 480px) {
+            div#wrapNegocio {
+                width: 100%;
+            }
+
+        }
+
+        div,
+        h4,
+        h5,
+        p,
+        table {
+            width: 100%;
+            /* display: block; */
+            font-family: sans-serif, Arial;
+        }
+
+        #wrapNegocio {
+            /* border: 1px solid blue; */
+            margin: 100px auto;
+            width: 60%;
+        }
+
+        #divLogo {
+            /* border: 1px solid red; */
+            display: block;
+            width: 100%;
+        }
+
+        #imgLogo {
+            width: 150px;
+            display: block;
+            margin: auto;
+        }
+
+        #txtTitulo {
+            text-align: center;
+            font-size: 1.7rem;
+            color: #09add0;
+        }
+
+        #txtTituloFactura {
+            color: #484f56;
+            font-size: 1.4rem;
+        }
+
+        #txtDetalle,
+        #txtDuda {
+            font-size: 1rem;
+            color: #3f3f3f;
+            width: 100%;
+            text-align: left;
+            line-break: auto;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        table {
+            background-color: rgb(33, 37, 41);
+            /* padding: 10px; */
+        }
+
+        tr {
+            color: rgb(231, 231, 231);
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 200;
+        }
+
+        th,
+        td {
+            border: 1px solid rgb(112, 112, 112);
+            padding: 10px;
+            font-weight: 400;
+        }
+
+        #divRedes {
+            /* border: 1px solid red; */
+            height: 30px;
+            width: 120px;
+            margin: 25px auto;
+        }
+
+        #divRedes>img {
+            height: 100%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #txtDuda {
+            text-align: center;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapNegocio">
+        <div id="divLogo">
+            <img id="imgLogo" src="cid:logo" alt="Logo">
+        </div>
+        <h5 id="txtTitulo">Conectando <span style="color: #484f56;"> negocios </span></h5>
+        <h4 id="txtTituloFactura">Factura # cb-milisegundos-contador</h4>
+        <p id="txtDetalle">A continuación se especificarán los detalles de la factura y los enlaces referentes al
+            negocio, dentro del
+            cual se encuentran los documentos legales:
+        </p>
+        <table>
+            <tbody>
+                <tr>
+                    <th>Documentos legales</th>
+                    <td>
+                        <a href="cid:docsLegales" style="color: rgb(9, 173, 208); cursor: pointer; border-bottom: 1px solid rgb(9, 173, 208);" download>Descargar</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Enlace del negocio</th>
+                    <td><a href="https://google.com" style="color: rgb(9, 173, 208); cursor: pointer !important;  border-bottom: 1px solid rgb(9, 173, 208);">Ver
+                            negocio</a></td>
+                </tr>
+                <tr>
+                    <th>Fecha de pago</th>
+                    <td>7/1/2021</td>
+                </tr>
+                <tr>
+                    <th>Enviado a</th>
+                    <td>algo@algo.com</td>
+                </tr>
+                <tr>
+                    <th>Decripción</th>
+                    <td>Acceso a emprendedor</td>
+                </tr>
+                <tr>
+                    <th>Costo</th>
+                    <td>$9.99 (USD)</td>
+                </tr>
+            </tbody>
+        </table>
+        <P id="txtDuda">Si tiene alguna duda o desea hacer un reclamo, puede contactarnos en cualquiera de nuestros
+            canales de
+            comunicación:
+        </P>
+        <div id="divRedes">
+            <img src="cid:facebook" alt="Facebook">
+            <img src="cid:instagram" alt="Instragram">
+            <img src="cid:twitter" alt="Twitter">
+        </div>
+    </div>
+</body>
+
+</html>
