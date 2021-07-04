@@ -126,8 +126,8 @@ negocio.get('/obtenerTodos', (req, resp) => {
 // ==================================================================== //
 negocio.get('/getMultimediaAll', (req, resp) => {
     const pathPipe = req.query.multi;
-    const multimedia = path_1.default.resolve(`../uploads/${pathPipe}`);
-    // const multimedia = path.resolve(__dirname, `../${pathPipe}`);
+    // const multimedia = path.resolve(`../uploads/${pathPipe}`);
+    const multimedia = path_1.default.resolve(__dirname, `../${pathPipe}`);
     return resp.sendFile(multimedia);
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
@@ -358,16 +358,19 @@ negocio.delete('/eliminarFavorito', (req, resp) => __awaiter(void 0, void 0, voi
 // obtener docs
 // ==================================================================== // 
 negocio.get('/obtenerDoc', (req, resp) => {
-    // const negocio: any = req.get('algo');
+    const pathNegocio = req.query.pathNegocio;
+    console.log(pathNegocio);
     // const partsNegocio = negocio.split('\\');
     // const rutaNegocio = `${partsNegocio[partsNegocio.length - 2]}/${partsNegocio[partsNegocio.length - 1]}`;
     // const rutaFinal = path.resolve(__dirname, `../uploads/${rutaNegocio}`);
-    return resp.sendFile(path_1.default.resolve(__dirname, '../uploads/60d1663712320f655cd36aa9/60d1663712320f655cd36aa9-453/docs.docx'));
+    // return resp.sendFile(path.resolve(__dirname, '../uploads/60d1663712320f655cd36aa9/60d1663712320f655cd36aa9-453/docs.docx'));
+    return resp.sendFile(path_1.default.resolve(__dirname, `../uploads/${pathNegocio}`));
 });
 // ==================================================================== //
 // correo de compra de contacto a negocio
 // ==================================================================== // 
 negocio.post('/contactoNegocio', (req, resp) => {
+    // console.log(req.body.pathNegocio);
     /*
     1. buscar el negocio basado en el id
     2. buscar su docs[0]
@@ -376,76 +379,85 @@ negocio.post('/contactoNegocio', (req, resp) => {
     5. agregarla al correo
     6. hacer verificaciones tanto en path como en req.body
      */
-    // const objetoCorreo = {
-    //     from: req.body.correo,
-    //     nombre: req.body.nombre,
-    //     mensaje: req.body.mensaje
-    // }
     // return;
-    const objetoCorreo = {
-        from: 'algo@algo.com',
-        nombre: 'Johnny',
-        mensaje: 'Mensaje de prueba'
-    };
-    const transp = nodemailer_1.createTransport({
-        host: "smtp.titan.email",
-        port: 465,
-        secure: true,
-        auth: {
-            user: "noreply@cbwyn.com",
-            pass: "noreply2021"
-        }, tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: false
-        },
+    const contactoInver = new Promise((resolve, reject) => {
+        const transp = nodemailer_1.createTransport({
+            host: "smtp.titan.email",
+            port: 465,
+            secure: true,
+            auth: {
+                user: "noreply@cbwyn.com",
+                pass: "noreply2021"
+            }, tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
+            },
+        });
+        const options = {
+            viewEngine: {
+                extname: '.handlebars',
+                layoutsDir: path_1.default.resolve(__dirname, '../dist/views/'),
+                defaultLayout: 'negocio',
+                partialsDir: path_1.default.resolve(__dirname, '../dist/views/'),
+            },
+            viewPath: path_1.default.resolve(__dirname, '../dist/views/'),
+            extName: '.handlebars',
+        };
+        transp.use('compile', hbs(options));
+        const mailOptions = {
+            from: `noreply@cbwyn.com`,
+            to: 'jomaromu2@gmail.com',
+            cc: 'jroserodev@gmail.com',
+            subject: `Facturación cbwyn`,
+            template: 'negocio',
+            context: {
+                correo: 'algo@algo.com',
+                fecha: '02/07/2021',
+                enlaceNegocio: `https://back.cbwyn.com/negocio/obtenerDoc?pathNegocio=${req.body.pathNegocio}`,
+                enlace: `https://cbwyn.com//#/negocio?id=${req.body.idNegocio}`,
+            },
+            attachments: [
+                { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+                { filename: 'facebook.png', path: '../dist/assets/facebook.png', cid: 'facebook' },
+                { filename: 'instagram.gif', path: '../dist/assets/instagram.gif', cid: 'instagram' },
+                { filename: 'twitter.png', path: '../dist/assets/twitter.png', cid: 'twitter' },
+                { filename: 'docs.docx', path: `https://back.cbwyn.com/negocio/obtenerDoc?pathNegocio=${req.body.pathNegocio}`, cid: 'docsLegales' },
+            ]
+        };
+        transp.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                // console.log(err);
+                // resp.json({
+                //     ok: false,
+                //     mensaje: 'Correo no enviado',
+                //     err
+                // });
+                reject(false);
+            }
+            else {
+                // console.log(info);
+                // resp.json({
+                //     ok: true,
+                //     mensaje: 'Correo enviado',
+                //     info
+                // });
+                resolve(true);
+            }
+        });
     });
-    const options = {
-        viewEngine: {
-            extname: '.handlebars',
-            layoutsDir: '../dist/views/',
-            defaultLayout: 'negocio',
-            partialsDir: '../dist/views/',
-        },
-        viewPath: '../dist/views/',
-        extName: '.handlebars',
-    };
-    transp.use('compile', hbs(options));
-    const mailOptions = {
-        from: `noreply@cbwyn.com`,
-        to: 'jomaromu2@gmail.com',
-        cc: 'jroserodev@gmail.com',
-        subject: `Facturación cbwyn`,
-        template: 'negocio',
-        context: {
-            correo: 'algo@algo.com',
-            fecha: '02/07/2021',
-        },
-        attachments: [
-            { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
-            { filename: 'facebook.png', path: '../dist/assets/facebook.png', cid: 'facebook' },
-            { filename: 'instagram.gif', path: '../dist/assets/instagram.gif', cid: 'instagram' },
-            { filename: 'twitter.png', path: '../dist/assets/twitter.png', cid: 'twitter' },
-            // { filename: 'docs.docx', path: 'http://localhost:3000/negocio/obtenerDoc/?idNegocio='1234556', cid: 'docsLegales' },
-            { filename: 'docs.docx', path: 'https://google.com', cid: 'docsLegales' },
-        ]
-    };
-    transp.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            console.log(err);
-            resp.json({
-                ok: false,
-                mensaje: 'Correo no enviado',
-                err
-            });
-        }
-        else {
-            console.log(info);
-            resp.json({
-                ok: true,
-                mensaje: 'Correo enviado',
-                info
-            });
-        }
+    Promise.all([contactoInver])
+        .then(respData => {
+        return resp.json({
+            ok: true,
+            mensaje: 'Correo enviado',
+            respData
+        });
+    }).catch(respErr => {
+        resp.json({
+            ok: false,
+            mensaje: 'Correo no enviado',
+            respErr
+        });
     });
 });
 // ==================================================================== //
@@ -484,7 +496,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
     const mailOptions = {
         from: `noreply@cbwyn.com`,
         // to: 'info@cbwyn.com',
-        cc: 'jroserodev@gmail.com',
+        to: 'jroserodev@gmail.com',
         subject: `Mensaje desde cbwyn`,
         template: 'contacto',
         context: {
