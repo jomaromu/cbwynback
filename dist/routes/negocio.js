@@ -370,7 +370,8 @@ negocio.get('/obtenerDoc', (req, resp) => {
 // correo de compra de contacto a negocio
 // ==================================================================== // 
 negocio.post('/contactoNegocio', (req, resp) => {
-    // console.log(req.body.pathNegocio);
+    console.log(req.body.pathNegocio);
+    console.log(req.body.idNegocio);
     /*
     1. buscar el negocio basado en el id
     2. buscar su docs[0]
@@ -396,52 +397,41 @@ negocio.post('/contactoNegocio', (req, resp) => {
         const options = {
             viewEngine: {
                 extname: '.handlebars',
-                layoutsDir: path_1.default.resolve(__dirname, '../dist/views/'),
+                layoutsDir: path_1.default.resolve(__dirname, '../views/'),
                 defaultLayout: 'negocio',
-                partialsDir: path_1.default.resolve(__dirname, '../dist/views/'),
+                partialsDir: path_1.default.resolve(__dirname, '../views/'),
             },
-            viewPath: path_1.default.resolve(__dirname, '../dist/views/'),
+            viewPath: path_1.default.resolve(__dirname, '../views/'),
             extName: '.handlebars',
         };
         transp.use('compile', hbs(options));
         const mailOptions = {
             from: `noreply@cbwyn.com`,
             to: 'jomaromu2@gmail.com',
-            cc: 'jroserodev@gmail.com',
+            cc: 'noreply@cbwyn.com',
+            // cc: 'info@cbwyn.com',
             subject: `Facturación cbwyn`,
             template: 'negocio',
             context: {
-                correo: 'algo@algo.com',
-                fecha: '02/07/2021',
-                enlaceNegocio: `https://back.cbwyn.com/negocio/obtenerDoc?pathNegocio=${req.body.pathNegocio}`,
+                correo: req.body.correoUsuario,
+                fecha: moment_1.default().format('l'),
                 enlace: `https://cbwyn.com//#/negocio?id=${req.body.idNegocio}`,
+                numeroFactura: req.body.idNegocio
             },
             attachments: [
                 { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
-                { filename: 'facebook.png', path: '../dist/assets/facebook.png', cid: 'facebook' },
-                { filename: 'instagram.gif', path: '../dist/assets/instagram.gif', cid: 'instagram' },
-                { filename: 'twitter.png', path: '../dist/assets/twitter.png', cid: 'twitter' },
-                { filename: 'docs.docx', path: `https://back.cbwyn.com/negocio/obtenerDoc?pathNegocio=${req.body.pathNegocio}`, cid: 'docsLegales' },
+                { filename: 'facebook.png', path: path_1.default.resolve(__dirname, '../assets/facebook.png'), cid: 'facebook' },
+                { filename: 'instagram.gif', path: path_1.default.resolve(__dirname, '../assets/instagram.png'), cid: 'instagram' },
+                { filename: 'twitter.png', path: path_1.default.resolve(__dirname, '../assets/twitter.png'), cid: 'twitter' },
+                { filename: 'docs.docx', path: path_1.default.resolve(__dirname, `../uploads/${req.body.pathNegocio}`), cid: 'docsLegales' },
             ]
         };
         transp.sendMail(mailOptions, (err, info) => {
             if (err) {
-                // console.log(err);
-                // resp.json({
-                //     ok: false,
-                //     mensaje: 'Correo no enviado',
-                //     err
-                // });
-                reject(false);
+                reject(err);
             }
             else {
-                // console.log(info);
-                // resp.json({
-                //     ok: true,
-                //     mensaje: 'Correo enviado',
-                //     info
-                // });
-                resolve(true);
+                resolve(info);
             }
         });
     });
@@ -453,7 +443,7 @@ negocio.post('/contactoNegocio', (req, resp) => {
             respData
         });
     }).catch(respErr => {
-        resp.json({
+        return resp.json({
             ok: false,
             mensaje: 'Correo no enviado',
             respErr
@@ -496,7 +486,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
     const mailOptions = {
         from: `noreply@cbwyn.com`,
         // to: 'info@cbwyn.com',
-        to: 'jroserodev@gmail.com',
+        to: 'jomaromu2@gmail.com',
         subject: `Mensaje desde cbwyn`,
         template: 'contacto',
         context: {

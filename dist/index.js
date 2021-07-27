@@ -15,7 +15,7 @@ const usuario_1 = __importDefault(require("./routes/usuario"));
 const negocio_1 = __importDefault(require("./routes/negocio"));
 const visa_1 = __importDefault(require("./routes/visa"));
 // instancia del servidor 
-const server = new server_1.default;
+const server = server_1.default.instance;
 // body parser
 server.app.use(body_parser_1.default.urlencoded({ extended: true }));
 server.app.use(body_parser_1.default.json());

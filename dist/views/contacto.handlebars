@@ -1,65 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Correo Negocio</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Contacto</title>
 
     <style>
-        @media screen and (max-width: 992px) {
-            div#wrapNegocio {
-                width: 90%;
-            }
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            list-style-type: none;
+            text-decoration: none !important;
         }
 
-        @media screen and (max-width: 576px) {
-            img#imgLogo {
-                width: 120px;
-            }
-
+        a {
+            text-decoration: none !important;
+            color: rgb(106, 201, 241);
+            font-size: 20px;
         }
 
-        @media screen and (max-width: 480px) {
-            div#wrapNegocio {
-                width: 100%;
-            }
-
+        p {
+            font-size: 20px;
         }
 
-        div,
+        #tabla {
+            border: 1px solid rgb(219, 219, 219);
+            padding: 8px;
+        }
+
+        p,
+        h1,
+        h2,
+        h3,
         h4,
         h5,
-        p,
-        table {
-            width: 100%;
-            /* display: block; */
-            font-family: sans-serif, Arial;
+        h6,
+        td,
+        th,
+        span {
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        #wrapNegocio {
+        body {
+            width: 100% !important;
+            min-width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            margin: 0;
+            Margin: 0;
+            padding: 0;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        td,
+        th {
             /* border: 1px solid blue; */
-            margin: 100px auto;
-            width: 60%;
-        }
-
-        #divLogo {
-            /* border: 1px solid red; */
-            display: block;
-            width: 100%;
-        }
-
-        #imgLogo {
-            width: 150px;
-            display: block;
-            margin: auto;
+            color: #c9c9c9;
+            border: 0px;
+            padding: 15px;
+            font-size: 20px;
         }
 
         #txtTitulo {
-            text-align: center;
-            font-size: 1.7rem;
-            color: #09add0;
+            font-size: 26px;
         }
 
         #txtTituloFactura {
@@ -67,56 +74,83 @@
             font-size: 1.4rem;
         }
 
-        table {
-            background-color: rgb(33, 37, 41);
-            /* padding: 10px; */
-        }
-
-        tr {
-            color: rgb(231, 231, 231);
-            text-align: left;
+        #txtDetalle,
+        #txtDuda {
             font-size: 1rem;
-            font-weight: 200;
+            line-break: auto;
+            font-weight: 400;
+            line-height: 1.2;
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
-        th,
-        td {
-            border: 1px solid rgb(112, 112, 112);
-            padding: 10px;
-            font-weight: 400;
+        .odd {
+            background-color: rgb(33, 37, 41);
+        }
+
+        .even {
+            background-color: rgb(44, 48, 52);
         }
     </style>
 </head>
 
 <body>
-    <div id="wrapNegocio">
-        <div id="divLogo">
-            <img id="imgLogo" src="cid:logo" alt="Logo">
-        </div>
-        <h5 id="txtTitulo">Conectando <span style="color: #484f56;"> negocios </span></h5>
-        <h4 id="txtTituloFactura">Consulta desde el formulario</h4>
-        <table>
+    <!-- <style> -->
+    <center>
+        <table id="tabla" class="body" border="0" style="width: 600px;">
             <tbody>
+
                 <tr>
-                    <th>Nombre</th>
-                    <td>
-                        {{nombre}}
+                    <td colspan="2">
+                        <center><img src="cid:logo" alt="Loogo"></center>
                     </td>
                 </tr>
+
                 <tr>
-                    <th>Correo</th>
-                    <td>
-                        {{correo}}
+                    <td colspan="2" style="padding-bottom: 50px; padding-top: 15px;">
+                        <center>
+                            <p id="txtTitulo"><span style="color: #09add0;">Conectando</span> <span
+                                    style="color: #484f56;">Negocios</span> </p>
+                        </center>
                     </td>
                 </tr>
-                <tr>
-                    <th>Mensaje</th>
-                    <td>{{mensaje}}</td>
+
+                <tr style="color: #3f3f3f;">
+                    <td colspan="2">
+                        <h4 id="txtTituloFactura">Mensaje desde contacto</h4>
+                    </td>
+                </tr>
+
+                <tr class="odd" style="padding-top: 10px; padding-bottom: 10px;">
+                    <th style="width: 50%; text-align: left;">
+                        <p>Nombre</p>
+                    </th>
+                    <td style="width: 50%; color: rgb(9, 173, 208);">
+                        <p>{{nombre}}</p>
+                    </td>
+                </tr>
+
+                <tr class="even" style="padding-top: 10px; padding-bottom: 10px;">
+                    <th style="width: 50%; text-align: left;">
+                        <p>Correo</p>
+                    </th>
+                    <td style="width: 50%; color: rgb(9, 173, 208);">
+                        <p>{{correo}}</p>
+                    </td>
+                </tr>
+
+                <tr class="even" style="padding-top: 10px; padding-bottom: 10px;">
+                    <th style="width: 50%; text-align: left;">
+                        <p>Mensaje</p>
+                    </th>
+                    <td style="width: 50%; color: rgb(9, 173, 208);">
+                        <p>{{mensaje}}</p>
+                    </td>
                 </tr>
             </tbody>
         </table>
+    </center>
 
-    </div>
 </body>
 
 </html>

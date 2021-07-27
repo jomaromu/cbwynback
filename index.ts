@@ -14,7 +14,7 @@ import negocio from './routes/negocio';
 import visa from './routes/visa';
 
 // instancia del servidor 
-const server = new Server;
+const server = Server.instance;
 
 // body parser
 server.app.use(bodyParser.urlencoded({ extended: true }));

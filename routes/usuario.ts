@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { Error, Query } from 'mongoose';
+import Server from '../classes/server';
+import path from 'path';
 
 import jwt from 'jsonwebtoken';
 import { objetoEnviroment } from '../global/enviroment';
@@ -7,6 +9,10 @@ import { objetoEnviroment } from '../global/enviroment';
 // esquemas - modelo
 import User from '../models/users';
 import Negocio from '../models/negocio';
+import UsuarioClass from '../classes/usuario';
+
+// instanciar clase negocio
+const usuarioClass = new UsuarioClass();
 
 // instanciar el router
 const usuario = Router();
@@ -170,11 +176,11 @@ usuario.get('/getUserId', (req: Request, resp: Response) => {
 // obtener negocios por ID del usuario
 // ==================================================================== //
 usuario.get('/negociosUsuario', (req: Request, resp: Response) => {
-    
+
     const id = req.get('id');
-    
-    Negocio.find({usuario: id}, (err: Error, negocioDB: Query<any, any>) => {
-        
+
+    Negocio.find({ usuario: id }, (err: Error, negocioDB: Query<any, any>) => {
+
         if (err) {
             resp.json({
                 ok: false,
@@ -184,11 +190,64 @@ usuario.get('/negociosUsuario', (req: Request, resp: Response) => {
         } else {
             resp.json({
                 ok: true,
-                mensaje: `Búsuqueda correcta`, 
+                mensaje: `Búsuqueda correcta`,
                 negocioDB
             });
         }
     });
 });
- 
+
+// ==================================================================== //
+// Actualizar un usuario
+// ==================================================================== //
+usuario.put('/actualizarPerfil', async (req: Request, resp: Response) => {
+
+    const idUsuario = req.body.idUsuario;
+    // console.log(req.body);
+    // console.log(req.files?.avatar);
+
+    const id = req.body.idUsuario;
+    const nombre = req.body.nombre;
+    const apellido = req.body.apellido;
+
+    const rutaAvatar = await usuarioClass.transformaImgs(req.files, id);
+    const avatar  = rutaAvatar.data[0];
+    console.log(avatar);
+
+    User.findByIdAndUpdate(id, { nombre, apellido, avatar }, { new: true }, (err: any, usuarioDB) => {
+
+        if (err) {
+            return resp.json({
+                ok: false,
+                mensaje: `Error interno`
+            });
+
+        } else {
+
+            const server = Server.instance;
+
+            server.io.emit('actualizar-perfil', usuarioDB);
+            resp.json({
+                ok: true,
+                mensaje: `Perfil acutalizado`
+            });
+        }
+
+    })
+
+});
+
+// ==================================================================== //
+// obtener avatar para perfil
+// ==================================================================== //
+usuario.get('/getMultimediaAll', (req: Request, resp: Response) => {
+
+    const pathPipe = req.query.multi;
+
+    // const multimedia = path.resolve(`../uploads/${pathPipe}`);
+    const multimedia = path.resolve(__dirname, `../uploads/${pathPipe}`);
+    return resp.sendFile(multimedia);
+    // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
+});
+
 export default usuario;

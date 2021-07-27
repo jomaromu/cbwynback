@@ -1,14 +1,28 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const server_1 = __importDefault(require("../classes/server"));
+const path_1 = __importDefault(require("path"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const enviroment_1 = require("../global/enviroment");
 // esquemas - modelo
 const users_1 = __importDefault(require("../models/users"));
 const negocio_1 = __importDefault(require("../models/negocio"));
+const usuario_1 = __importDefault(require("../classes/usuario"));
+// instanciar clase negocio
+const usuarioClass = new usuario_1.default();
 // instanciar el router
 const usuario = express_1.Router();
 // ==================================================================== //
@@ -162,5 +176,45 @@ usuario.get('/negociosUsuario', (req, resp) => {
             });
         }
     });
+});
+// ==================================================================== //
+// Actualizar un usuario
+// ==================================================================== //
+usuario.put('/actualizarPerfil', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
+    const idUsuario = req.body.idUsuario;
+    // console.log(req.body);
+    // console.log(req.files?.avatar);
+    const id = req.body.idUsuario;
+    const nombre = req.body.nombre;
+    const apellido = req.body.apellido;
+    const rutaAvatar = yield usuarioClass.transformaImgs(req.files, id);
+    const avatar = rutaAvatar.data[0];
+    console.log(avatar);
+    users_1.default.findByIdAndUpdate(id, { nombre, apellido, avatar }, { new: true }, (err, usuarioDB) => {
+        if (err) {
+            return resp.json({
+                ok: false,
+                mensaje: `Error interno`
+            });
+        }
+        else {
+            const server = server_1.default.instance;
+            server.io.emit('actualizar-perfil', usuarioDB);
+            resp.json({
+                ok: true,
+                mensaje: `Perfil acutalizado`
+            });
+        }
+    });
+}));
+// ==================================================================== //
+// obtener avatar para perfil
+// ==================================================================== //
+usuario.get('/getMultimediaAll', (req, resp) => {
+    const pathPipe = req.query.multi;
+    // const multimedia = path.resolve(`../uploads/${pathPipe}`);
+    const multimedia = path_1.default.resolve(__dirname, `../uploads/${pathPipe}`);
+    return resp.sendFile(multimedia);
+    // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
 exports.default = usuario;
