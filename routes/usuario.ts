@@ -31,7 +31,7 @@ usuario.get('/', (req: Request, resp: Response) => {
 // ==================================================================== //
 // registrar un usuario
 // ==================================================================== //
-usuario.post('/registrar', (req: Request, resp: Response) => {
+usuario.post('/registrar', async (req: Request, resp: Response) => {
 
     // crear eschema del usuario
     const usuarioRegistrar = new User({
@@ -39,7 +39,7 @@ usuario.post('/registrar', (req: Request, resp: Response) => {
         password: req.body.password,
         soyMayor: req.body.soyMayor,
         fechaAlta: req.body.fechaAlta,
-        role: req.body.role
+        role: req.body.role,
     });
 
     usuarioRegistrar.save((err, usuarioDB) => {
@@ -203,6 +203,8 @@ usuario.get('/negociosUsuario', (req: Request, resp: Response) => {
 usuario.put('/actualizarPerfil', async (req: Request, resp: Response) => {
 
     const idUsuario = req.body.idUsuario;
+    const idSocket = req.get('idSocket');
+    console.log(idSocket);
     // console.log(req.body);
     // console.log(req.files?.avatar);
 
@@ -211,8 +213,8 @@ usuario.put('/actualizarPerfil', async (req: Request, resp: Response) => {
     const apellido = req.body.apellido;
 
     const rutaAvatar = await usuarioClass.transformaImgs(req.files, id);
-    const avatar  = rutaAvatar.data[0];
-    console.log(avatar);
+    const avatar = rutaAvatar.data[0];
+    // console.log(avatar);
 
     User.findByIdAndUpdate(id, { nombre, apellido, avatar }, { new: true }, (err: any, usuarioDB) => {
 
@@ -226,7 +228,9 @@ usuario.put('/actualizarPerfil', async (req: Request, resp: Response) => {
 
             const server = Server.instance;
 
-            server.io.emit('actualizar-perfil', usuarioDB);
+            // server.io.emit('actualizar-perfil', usuarioDB);
+            server.io.to(`${idSocket}`).emit('actualizar-perfil', usuarioDB);
+
             resp.json({
                 ok: true,
                 mensaje: `Perfil acutalizado`
@@ -248,6 +252,6 @@ usuario.get('/getMultimediaAll', (req: Request, resp: Response) => {
     const multimedia = path.resolve(__dirname, `../uploads/${pathPipe}`);
     return resp.sendFile(multimedia);
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
-});
+}); 
 
 export default usuario;

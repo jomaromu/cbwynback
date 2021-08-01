@@ -27,58 +27,164 @@ const negocioClass = new NegocioClass;
 negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
 
     const rutas = await negocioClass.transformaImgs(req.files, req.body.usuario);
-    const fecha = moment().format('l');
 
-    const nuevoNegocio = new Negocio({
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        tipoNegocio: req.body.tipoNegocio,
-        tiempo: req.body.tiempo,
-        monto: req.body.monto,
-        categoria: req.body.categoria,
-        ubicacion: req.body.ubicacion,
-        utilidad: req.body.utilidad,
-        retorno: req.body.retorno,
-        garantia: req.body.garantia,
-        otras: req.body.otras,
-        logo: rutas.data[0],
-        portada: rutas.data[1],
-        img: rutas.data[4],
-        video: rutas.data[2],
-        docs: rutas.data[3],
-        codigoTel: req.body.codigoTel,
-        numeroTel: req.body.numeroTel,
-        pagWeb: req.body.pagWeb,
-        usuario: req.body.usuario,
-        rutaNegocio: rutas.rutaNegocio,
-        rutaUsuario: rutas.rutaUsuario,
-        rutaCorta: rutas.rutanegocioCorta,
-        fechaAlta: fecha
+    const crearNegocio = new Promise(async (resolve, reject) => {
+
+        const fecha = moment().format('l');
+
+        const nuevoNegocio = new Negocio({
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            tipoNegocio: req.body.tipoNegocio,
+            tiempo: req.body.tiempo,
+            monto: req.body.monto,
+            categoria: req.body.categoria,
+            ubicacion: req.body.ubicacion,
+            utilidad: req.body.utilidad,
+            retorno: req.body.retorno,
+            garantia: req.body.garantia,
+            otras: req.body.otras,
+            logo: rutas.data[0],
+            portada: rutas.data[1],
+            img: rutas.data[4],
+            video: rutas.data[2],
+            docs: rutas.data[3],
+            codigoTel: req.body.codigoTel,
+            numeroTel: req.body.numeroTel,
+            pagWeb: req.body.pagWeb,
+            usuario: req.body.usuario,
+            rutaNegocio: rutas.rutaNegocio,
+            rutaUsuario: rutas.rutaUsuario,
+            rutaCorta: rutas.rutanegocioCorta,
+            fechaAlta: fecha
+        });
+
+        // guardar el negocio
+        nuevoNegocio.save((err, negocioDB: any) => {
+
+            const objNegocioCreado = {
+                ok: false,
+                mensaje: '',
+                negocioDB: {}
+            }
+
+            if (err) {
+
+                objNegocioCreado.ok = false;
+                objNegocioCreado.mensaje = 'Error al crearl el negocio';
+
+                reject(objNegocioCreado);
+
+            } else {
+
+                // objNegocioCreado.ok = true;
+                // objNegocioCreado.mensaje = 'Negocio creado';
+                // objNegocioCreado.negocioDB = negocioDB
+
+                // ================================ //
+                // empieza notificacion
+                // ================================ //
+
+                const splitDoc: any[] = negocioDB.docs[0].split('\\');
+                const pathNegocio = `${splitDoc[splitDoc.length - 2]}/${splitDoc[splitDoc.length - 1]}`;
+
+                const nombreUsuario = req.body.nombreUsuario;
+                const apellidoUsuario = req.body.apellidoUsuario;
+                const correoUsuario = req.body.correoUsuario;
+                const idNegocio = negocioDB._id;
+                const rutaNegocio = pathNegocio;
+                const codigoTel = negocioDB.codigoTel;
+                const numeroTel = negocioDB.numeroTel;
+
+                // console.log(rutaNegocio);
+
+                const transp = createTransport({
+                    host: "smtp.titan.email",
+                    port: 465,
+                    secure: true, // use TLS
+                    auth: {
+                        user: "noreply@cbwyn.com",
+                        pass: "noreply2021"
+                    }, tls: {
+                        // do not fail on invalid certs
+                        rejectUnauthorized: false
+                    },
+                });
+
+                const options = {
+                    viewEngine: {
+                        extname: '.handlebars', // handlebars extension
+                        layoutsDir: path.resolve(__dirname, '../views/'), // location of handlebars templates
+                        defaultLayout: 'nuevo-negocio-notificacion', // name of main template
+                        partialsDir: path.resolve(__dirname, '../views/'), // location of your subtemplates aka. header, footer etc
+                    },
+                    viewPath: path.resolve(__dirname, '../views/'),
+                    extName: '.handlebars',
+                };
+
+                transp.use('compile', hbs(options));
+
+                const mailOptions = {
+                    from: `noreply@cbwyn.com`,
+                    // to: 'jomaromu2@gmail.com', // req.body.correoUsuario
+                    // cc: 'noreply@cbwyn.com',
+                    to: 'info@cbwyn.com',
+                    subject: `Nuevo negocio creado`,
+                    template: 'nuevo-negocio-notificacion',
+                    context: {
+                        correo: req.body.correoUsuario,
+                        nombreUsuario: nombreUsuario,
+                        apellidoUsuario: apellidoUsuario,
+                        correoUsuario: correoUsuario,
+                        codigoTel: codigoTel,
+                        numeroTel: numeroTel,
+
+                        fecha: moment().format('l'),
+                        enlace: `https://cbwyn.com//#/negocio?id=${idNegocio}`,
+                        // enlace: `http://190.218.38.94/#/negocio?id=${idNegocio}`,
+                        // numeroFactura: req.body.idNegocio
+                    },
+                    attachments: [
+                        { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+                        // { filename: 'docs.docx', path: path.resolve(__dirname, `../uploads/${rutaNegocio}`), cid: 'docsLegales' },
+                    ]
+                }
+
+                transp.sendMail(mailOptions, (err, info) => {
+                    if (err) {
+                        // console.log(err);
+                        objNegocioCreado.ok = false;
+                        objNegocioCreado.mensaje = 'Negocio creado (Sin notificación)';
+                        reject(objNegocioCreado);
+                    } else {
+                        resolve(info);
+                        objNegocioCreado.ok = true;
+                        objNegocioCreado.mensaje = 'Negocio crado (Con notificación)';
+                        objNegocioCreado.negocioDB = negocioDB;
+                        resolve(objNegocioCreado);
+                    }
+                });
+
+                // ================================ //
+                // termina notificacion
+                // ================================ //
+            }
+        });
     });
 
-    // guardar el negocio
-    nuevoNegocio.save((err, negocioDB) => {
-
-        // error interno
-        if (err) {
-            return resp.json({
-                ok: false,
-                mensaje: 'Error al crear negocio',
-                err
-            });
-
-            // si todo va bien
-        } else {
+    Promise.all([crearNegocio])
+        .then((data: any) => {
             return resp.json({
                 ok: true,
-                mensaje: 'Negocio creado',
-                negocioDB
+                mensaje: data.mensaje,
+                data
+            })
+        }).catch(err => {
+            return resp.json({
+                ok: false,
+                mensaje: err.mensaje
             });
-        }
-
-
-
-    });
+        });
 });
 
 // ==================================================================== //
@@ -102,7 +208,7 @@ negocio.get('/obtenerTodos', (req: Request, resp: Response) => {
                 negocioDB
             });
         }
-    });
+    }).sort({ '_id': 'descending' });
 });
 
 // ==================================================================== //
@@ -378,7 +484,7 @@ negocio.delete('/eliminarFavorito', async (req: Request, resp: Response) => {
 negocio.get('/obtenerDoc', (req: Request, resp: Response) => {
 
     const pathNegocio = req.query.pathNegocio;
-    console.log(pathNegocio);
+    // console.log(pathNegocio);
 
     // const partsNegocio = negocio.split('\\');
     // const rutaNegocio = `${partsNegocio[partsNegocio.length - 2]}/${partsNegocio[partsNegocio.length - 1]}`;
@@ -394,8 +500,8 @@ negocio.get('/obtenerDoc', (req: Request, resp: Response) => {
 // ==================================================================== // 
 negocio.post('/contactoNegocio', (req: Request, resp: Response) => {
 
-    console.log(req.body.pathNegocio);
-    console.log(req.body.idNegocio);
+    // console.log(req.body.pathNegocio);
+    // console.log(req.body.idNegocio);
 
     /* 
     1. buscar el negocio basado en el id
@@ -437,8 +543,8 @@ negocio.post('/contactoNegocio', (req: Request, resp: Response) => {
 
         const mailOptions = {
             from: `noreply@cbwyn.com`,
-            to: 'jomaromu2@gmail.com', // req.body.correoUsuario
-            cc: 'noreply@cbwyn.com',
+            to: `${req.body.correoUsuario}`, // req.body.correoUsuario
+            // cc: 'noreply@cbwyn.com',
             // cc: 'info@cbwyn.com',
             subject: `Facturación cbwyn`,
             template: 'negocio',
@@ -493,7 +599,7 @@ negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
         mensaje: req.body.mensaje
     }
 
-    console.log(objetoCorreo);
+    // console.log(objetoCorreo);
 
     const transp = createTransport({
         host: "smtp.titan.email",
@@ -523,8 +629,8 @@ negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
 
     const mailOptions = {
         from: `noreply@cbwyn.com`,
-        // to: 'info@cbwyn.com',
-        to: 'jomaromu2@gmail.com',
+        to: 'info@cbwyn.com',
+        // to: 'jomaromu2@gmail.com',
         subject: `Mensaje desde cbwyn`,
         template: 'contacto',
         context: {
@@ -539,14 +645,14 @@ negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
 
     transp.sendMail(mailOptions, (err, info) => {
         if (err) {
-            console.log(err);
+            // console.log(err);
             resp.json({
                 ok: false,
                 mensaje: 'Correo no enviado',
                 err
             });
         } else {
-            console.log(info);
+            // console.log(info);
             resp.json({
                 ok: true,
                 mensaje: 'Correo enviado',

@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Nuevo negocio creado</title>
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      list-style-type: none;
+      text-decoration: none !important;
+    }
+
+    a {
+      text-decoration: none !important;
+      color: rgb(106, 201, 241);
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    #tabla {
+      border: 1px solid rgb(219, 219, 219);
+      padding: 8px;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    td,
+    th,
+    span {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      width: 100% !important;
+      min-width: 100%;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      margin: 0;
+      Margin: 0;
+      padding: 0;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    td,
+    th {
+      /* border: 1px solid blue; */
+      color: #c9c9c9;
+      border: 0px;
+      padding: 15px;
+      font-size: 20px;
+    }
+
+    #txtTitulo {
+      font-size: 26px;
+    }
+
+    #txtTituloFactura {
+      color: #484f56;
+      font-size: 1.4rem;
+    }
+
+    #txtDetalle,
+    #txtDuda {
+      font-size: 1rem;
+      line-break: auto;
+      font-weight: 400;
+      line-height: 1.2;
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+
+    .odd {
+      background-color: rgb(33, 37, 41);
+    }
+
+    .even {
+      background-color: rgb(44, 48, 52);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <style> -->
+  <center>
+    <table id="tabla" class="body" border="0" style="width: 600px;">
+      <tbody>
+
+        <tr>
+          <td colspan="2">
+            <center><img src="cid:logo" alt="Loogo"></center>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2" style="padding-bottom: 50px; padding-top: 15px;">
+            <center>
+              <p id="txtTitulo"><span style="color: #09add0;">Conectando</span> <span
+                  style="color: #484f56;">Negocios</span> </p>
+            </center>
+          </td>
+        </tr>
+
+        <tr style="color: #3f3f3f;">
+          <td colspan="2">
+            <h4 id="txtTituloFactura">Nuevo negocio creado</h4>
+            {{!-- <h4 id="txtTituloFactura">Factura # cb-{{numeroFactura}}</h4> --}}
+          </td>
+        </tr>
+
+        <tr class="even" style="padding-top: 10px; padding-bottom: 10px;">
+          <th style="width: 50%; text-align: left;">
+            <p> Enlace del negocio</p>
+          </th>
+          <td style="width: 50%; color: rgb(9, 173, 208);">
+            <a href="{{enlace}}"> Ver negocio</a>
+          </td>
+        </tr>
+
+        <tr class="odd" style="padding-top: 10px; padding-bottom: 10px;">
+          <th style="width: 50%; text-align: left;">
+            <p> Nombre Usuario</p>
+          </th>
+          <td style="width: 50%;">
+            <p>{{nombreUsuario}} {{apellidoUsuario}}</p>
+          </td>
+        </tr>
+
+        <tr class="odd" style="padding-top: 10px; padding-bottom: 10px;">
+          <th style="width: 50%; text-align: left;">
+            <p> Correo Usuario</p>
+          </th>
+          <td style="width: 50%;">
+            <p>{{correoUsuario}}</p>
+          </td>
+        </tr>
+
+        <tr class="odd" style="padding-top: 10px; padding-bottom: 10px;">
+          <th style="width: 50%; text-align: left;">
+            <p> Teléfono Usuario</p>
+          </th>
+          <td style="width: 50%;">
+            <p>{{codigoTel}} - {{numeroTel}}</p>
+          </td>
+        </tr>
+
+
+      </tbody>
+    </table>
+  </center>
+
+</body>
+
+</html>

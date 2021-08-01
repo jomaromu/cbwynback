@@ -37,14 +37,14 @@ usuario.get('/', (req, resp) => {
 // ==================================================================== //
 // registrar un usuario
 // ==================================================================== //
-usuario.post('/registrar', (req, resp) => {
+usuario.post('/registrar', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     // crear eschema del usuario
     const usuarioRegistrar = new users_1.default({
         correo: req.body.correo,
         password: req.body.password,
         soyMayor: req.body.soyMayor,
         fechaAlta: req.body.fechaAlta,
-        role: req.body.role
+        role: req.body.role,
     });
     usuarioRegistrar.save((err, usuarioDB) => {
         if (err) {
@@ -61,7 +61,7 @@ usuario.post('/registrar', (req, resp) => {
             });
         }
     });
-});
+}));
 // ==================================================================== //
 // loguear un usuario
 // ==================================================================== //
@@ -182,6 +182,8 @@ usuario.get('/negociosUsuario', (req, resp) => {
 // ==================================================================== //
 usuario.put('/actualizarPerfil', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const idUsuario = req.body.idUsuario;
+    const idSocket = req.get('idSocket');
+    console.log(idSocket);
     // console.log(req.body);
     // console.log(req.files?.avatar);
     const id = req.body.idUsuario;
@@ -189,7 +191,7 @@ usuario.put('/actualizarPerfil', (req, resp) => __awaiter(void 0, void 0, void 0
     const apellido = req.body.apellido;
     const rutaAvatar = yield usuarioClass.transformaImgs(req.files, id);
     const avatar = rutaAvatar.data[0];
-    console.log(avatar);
+    // console.log(avatar);
     users_1.default.findByIdAndUpdate(id, { nombre, apellido, avatar }, { new: true }, (err, usuarioDB) => {
         if (err) {
             return resp.json({
@@ -199,7 +201,8 @@ usuario.put('/actualizarPerfil', (req, resp) => __awaiter(void 0, void 0, void 0
         }
         else {
             const server = server_1.default.instance;
-            server.io.emit('actualizar-perfil', usuarioDB);
+            // server.io.emit('actualizar-perfil', usuarioDB);
+            server.io.to(`${idSocket}`).emit('actualizar-perfil', usuarioDB);
             resp.json({
                 ok: true,
                 mensaje: `Perfil acutalizado`

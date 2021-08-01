@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.socketUsuario = void 0;
-// actualizar usuario
-exports.socketUsuario = (cliente, io) => {
+exports.emitGetIds = void 0;
+// emitir ids
+exports.emitGetIds = (cliente, io) => {
+    cliente.on('emitGetIds', () => {
+        io.to(cliente.id).emit('usuarios-conectados', cliente.id);
+    });
 };
