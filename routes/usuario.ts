@@ -204,7 +204,7 @@ usuario.put('/actualizarPerfil', async (req: Request, resp: Response) => {
 
     const idUsuario = req.body.idUsuario;
     const idSocket = req.get('idSocket');
-    console.log(idSocket);
+    // console.log(idSocket);
     // console.log(req.body);
     // console.log(req.files?.avatar);
 

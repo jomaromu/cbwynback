@@ -20,11 +20,11 @@ const server = server_1.default.instance;
 server.app.use(body_parser_1.default.urlencoded({ extended: true }));
 server.app.use(body_parser_1.default.json());
 // file upload
-server.app.use(express_fileupload_1.default());
+server.app.use((0, express_fileupload_1.default)());
 // cors
-server.app.use(cors_1.default({ origin: true, credentials: true }));
+server.app.use((0, cors_1.default)({ origin: true, credentials: true }));
 // conexion a base de datos
-const uriDB = 'mongodb+srv://cybDB:12345678Mm&@cbwyndb-clouster.9tgic.mongodb.net/cybDB?retryWrites=true&w=majority';
+// const uriDB = 'mongodb+srv://cybDB:12345678Mm&@cbwyndb-clouster.9tgic.mongodb.net/cybDB?retryWrites=true&w=majority';
 // mongoose.connect(uriDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
 //     if (err) throw err;
 //     console.log('Base de datos online');

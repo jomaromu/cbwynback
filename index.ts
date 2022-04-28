@@ -27,7 +27,7 @@ server.app.use(fileUpload());
 server.app.use(cors({ origin: true, credentials: true }));
  
 // conexion a base de datos
-const uriDB = 'mongodb+srv://cybDB:12345678Mm&@cbwyndb-clouster.9tgic.mongodb.net/cybDB?retryWrites=true&w=majority';
+// const uriDB = 'mongodb+srv://cybDB:12345678Mm&@cbwyndb-clouster.9tgic.mongodb.net/cybDB?retryWrites=true&w=majority';
 // mongoose.connect(uriDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
 //     if (err) throw err;
 //     console.log('Base de datos online');

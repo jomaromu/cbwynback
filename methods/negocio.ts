@@ -5,7 +5,7 @@ import Negocio from '../models/negocio';
 
 // criterios de busqueda
 const filtroBusqueda = (ubicacion: any, categoria: any, cantidad: any, req: Request, resp: Response) => {
-    console.log('cantidad: ' + cantidad, 'ubicacion: ' + ubicacion, 'categoria: ' + categoria);
+    // console.log('cantidad: ' + cantidad, 'ubicacion: ' + ubicacion, 'categoria: ' + categoria);
 
     let nuevaUb = ubicacion;
     let nuevaCat = categoria;

@@ -37,7 +37,7 @@ class UsuarioClass {
                             resolve(`${rutaUsuario}/avatar-${miliseconds}.png`);
                         }
                         else {
-                            rimraf_1.default(`${rutaUsuario}/*`, (err) => {
+                            (0, rimraf_1.default)(`${rutaUsuario}/*`, (err) => {
                                 if (err) {
                                     reject('No se pudo borrar el avatar default');
                                 }
@@ -78,7 +78,7 @@ class UsuarioClass {
                             });
                         }
                         else {
-                            rimraf_1.default(`${rutaUsuario}/*`, (err) => {
+                            (0, rimraf_1.default)(`${rutaUsuario}/*`, (err) => {
                                 if (err) {
                                     reject('No se pudo borrar el avatar default');
                                 }
@@ -101,6 +101,7 @@ class UsuarioClass {
                 data,
                 // rutaArchivosUsuario,
                 rutaUsuario,
+                // rutanegocioCorta
             };
             return objUsuario;
         }).catch((err) => {

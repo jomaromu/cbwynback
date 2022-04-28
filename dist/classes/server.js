@@ -11,7 +11,7 @@ const socket_1 = require("../sockets/socket");
 // exportar clase
 class Server {
     constructor() {
-        this.app = express_1.default(); // crear express
+        this.app = (0, express_1.default)(); // crear express
         this.port = enviroment_1.objetoEnviroment.port;
         this.httpServer = new http_1.default.Server(this.app); // crear el servidor
         this.cliente = [];
@@ -35,7 +35,7 @@ class Server {
         this.io.on('connection', (cliente) => {
             console.log('Clientes conectado');
             // recibir solicitud de usuarios activos
-            socket_1.emitGetIds(cliente, this.io);
+            (0, socket_1.emitGetIds)(cliente, this.io);
         });
     }
     // metodo que levanta el servidor

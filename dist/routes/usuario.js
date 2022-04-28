@@ -24,7 +24,7 @@ const usuario_1 = __importDefault(require("../classes/usuario"));
 // instanciar clase negocio
 const usuarioClass = new usuario_1.default();
 // instanciar el router
-const usuario = express_1.Router();
+const usuario = (0, express_1.Router)();
 // ==================================================================== //
 // ruta principal
 // ==================================================================== //
@@ -183,7 +183,7 @@ usuario.get('/negociosUsuario', (req, resp) => {
 usuario.put('/actualizarPerfil', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const idUsuario = req.body.idUsuario;
     const idSocket = req.get('idSocket');
-    console.log(idSocket);
+    // console.log(idSocket);
     // console.log(req.body);
     // console.log(req.files?.avatar);
     const id = req.body.idUsuario;

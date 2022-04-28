@@ -16,7 +16,7 @@ export default class NegocioClass {
         const miliseconds = new Date().getMilliseconds();
 
         const pathLogo = path.resolve(__dirname, '../assets/logocbwyn.png');
-        const pathLogoPortada = path.resolve(__dirname, '../assets/logo-final-portada.png');
+        const pathLogoPortada = path.resolve(__dirname, '../assets/logocbwyn.png');
         const pathVideo = path.resolve(__dirname, '../assets/videocbwyn.mp4');
 
         const rutaUsuario = path.resolve(__dirname, `../uploads/${idUusuario}`);
@@ -24,6 +24,7 @@ export default class NegocioClass {
         const rutanegocioCorta = `${idUusuario}-${miliseconds}`;
         const rutaNegocio = path.resolve(__dirname, `../uploads/${idUusuario}/${rutanegocioCorta}`);
 
+        console.log(pathLogoPortada)
         // logo
         const promesaLogo = new Promise((resolve, reject) => {
             if (!imgs?.logo) { // si no viene un logo
@@ -189,7 +190,7 @@ export default class NegocioClass {
             if (imgs.img !== undefined && imgs.img !== null && !Array.isArray(imgs.img)) {
 
                 if (!Array.isArray(imgs.img)) {
-                    console.log('no es un array');
+                    // console.log('no es un array');
 
                     // subir los logos
                     for (let i = 0; i < 3; i++) {
@@ -231,7 +232,7 @@ export default class NegocioClass {
             if (imgs.img !== undefined && imgs.img !== null && Array.isArray(imgs.img)) {
 
                 if (Array.isArray(imgs.img)) {
-                    console.log('es un array');
+                    // console.log('es un array');
 
                     for (let j = 0; j < 3; j++) {
 

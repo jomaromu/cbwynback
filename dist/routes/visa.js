@@ -7,7 +7,7 @@ const express_1 = require("express");
 const fs_1 = __importDefault(require("fs"));
 const request_1 = __importDefault(require("request"));
 // instanciar el router
-const visa = express_1.Router();
+const visa = (0, express_1.Router)();
 // ==================================================================== //
 // ruta prueba
 // ==================================================================== //

@@ -126,9 +126,9 @@ negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
 
                 const mailOptions = {
                     from: `noreply@cbwyn.com`,
-                    // to: 'jomaromu2@gmail.com', // req.body.correoUsuario
+                    to: 'jomaromu2@gmail.com', // req.body.correoUsuario
                     // cc: 'noreply@cbwyn.com',
-                    to: 'info@cbwyn.com',
+                    // to: 'info@cbwyn.com',
                     subject: `Nuevo negocio creado`,
                     template: 'nuevo-negocio-notificacion',
                     context: {
@@ -145,8 +145,8 @@ negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
                         // numeroFactura: req.body.idNegocio
                     },
                     attachments: [
-                        { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
-                        // { filename: 'docs.docx', path: path.resolve(__dirname, `../uploads/${rutaNegocio}`), cid: 'docsLegales' },
+                        { filename: 'logo-final-portada.png', path: path.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
+                        { filename: 'docs.docx', path: path.resolve(__dirname, `../uploads/${rutaNegocio}`), cid: 'docsLegales' },
                     ]
                 }
 
@@ -157,7 +157,7 @@ negocio.post('/nuevoNegocio', async (req: Request, resp: Response) => {
                         objNegocioCreado.mensaje = 'Negocio creado (Sin notificación)';
                         reject(objNegocioCreado);
                     } else {
-                        resolve(info);
+                        // console.log(info);
                         objNegocioCreado.ok = true;
                         objNegocioCreado.mensaje = 'Negocio crado (Con notificación)';
                         objNegocioCreado.negocioDB = negocioDB;
@@ -219,8 +219,10 @@ negocio.get('/getMultimediaAll', (req: Request, resp: Response) => {
     const pathPipe = req.query.multi;
 
     // const multimedia = path.resolve(`../uploads/${pathPipe}`);
-    const multimedia = path.resolve(__dirname, `../${pathPipe}`);
+    const multimedia = path.resolve(__dirname, `../uploads/${pathPipe}`);
+    // console.log(multimedia)
     return resp.sendFile(multimedia);
+
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
 
@@ -555,7 +557,7 @@ negocio.post('/contactoNegocio', (req: Request, resp: Response) => {
                 numeroFactura: req.body.idNegocio
             },
             attachments: [
-                { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+                { filename: 'logo-final-portada.png', path: path.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
                 { filename: 'facebook.png', path: path.resolve(__dirname, '../assets/facebook.png'), cid: 'facebook' },
                 { filename: 'instagram.gif', path: path.resolve(__dirname, '../assets/instagram.png'), cid: 'instagram' },
                 { filename: 'twitter.png', path: path.resolve(__dirname, '../assets/twitter.png'), cid: 'twitter' },
@@ -630,7 +632,7 @@ negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
     const mailOptions = {
         from: `noreply@cbwyn.com`,
         to: 'info@cbwyn.com',
-        // to: 'jomaromu2@gmail.com',
+        cc: 'jomaromu2@gmail.com',
         subject: `Mensaje desde cbwyn`,
         template: 'contacto',
         context: {
@@ -639,7 +641,7 @@ negocio.post('/contactoPlataforma', (req: Request, resp: Response) => {
             mensaje: objetoCorreo.mensaje,
         },
         attachments: [
-            { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+            { filename: 'logo-final-portada.png', path: path.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
         ]
     }
 

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const negocio_1 = __importDefault(require("../models/negocio"));
 // criterios de busqueda
 const filtroBusqueda = (ubicacion, categoria, cantidad, req, resp) => {
-    console.log('cantidad: ' + cantidad, 'ubicacion: ' + ubicacion, 'categoria: ' + categoria);
+    // console.log('cantidad: ' + cantidad, 'ubicacion: ' + ubicacion, 'categoria: ' + categoria);
     let nuevaUb = ubicacion;
     let nuevaCat = categoria;
     let nuevaCant = cantidad;

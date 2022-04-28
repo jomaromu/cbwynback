@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -14,7 +18,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -45,7 +49,7 @@ const negocio_2 = __importDefault(require("../classes/negocio"));
 // metodos
 const filtros = __importStar(require("../methods/negocio"));
 // instanciar el router
-const negocio = express_1.Router();
+const negocio = (0, express_1.Router)();
 // instanciar clase negocio
 const negocioClass = new negocio_2.default;
 // ==================================================================== //
@@ -54,7 +58,7 @@ const negocioClass = new negocio_2.default;
 negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, function* () {
     const rutas = yield negocioClass.transformaImgs(req.files, req.body.usuario);
     const crearNegocio = new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
-        const fecha = moment_1.default().format('l');
+        const fecha = (0, moment_1.default)().format('l');
         const nuevoNegocio = new negocio_1.default({
             nombre: req.body.nombre,
             descripcion: req.body.descripcion,
@@ -110,7 +114,7 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
                 const codigoTel = negocioDB.codigoTel;
                 const numeroTel = negocioDB.numeroTel;
                 // console.log(rutaNegocio);
-                const transp = nodemailer_1.createTransport({
+                const transp = (0, nodemailer_1.createTransport)({
                     host: "smtp.titan.email",
                     port: 465,
                     secure: true,
@@ -127,7 +131,7 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
                         extname: '.handlebars',
                         layoutsDir: path_1.default.resolve(__dirname, '../views/'),
                         defaultLayout: 'nuevo-negocio-notificacion',
-                        partialsDir: path_1.default.resolve(__dirname, '../views/'),
+                        partialsDir: path_1.default.resolve(__dirname, '../views/'), // location of your subtemplates aka. header, footer etc
                     },
                     viewPath: path_1.default.resolve(__dirname, '../views/'),
                     extName: '.handlebars',
@@ -135,9 +139,9 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
                 transp.use('compile', hbs(options));
                 const mailOptions = {
                     from: `noreply@cbwyn.com`,
-                    // to: 'jomaromu2@gmail.com', // req.body.correoUsuario
+                    to: 'jomaromu2@gmail.com',
                     // cc: 'noreply@cbwyn.com',
-                    to: 'info@cbwyn.com',
+                    // to: 'info@cbwyn.com',
                     subject: `Nuevo negocio creado`,
                     template: 'nuevo-negocio-notificacion',
                     context: {
@@ -147,11 +151,14 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
                         correoUsuario: correoUsuario,
                         codigoTel: codigoTel,
                         numeroTel: numeroTel,
-                        fecha: moment_1.default().format('l'),
+                        fecha: (0, moment_1.default)().format('l'),
                         enlace: `https://cbwyn.com//#/negocio?id=${idNegocio}`,
+                        // enlace: `http://190.218.38.94/#/negocio?id=${idNegocio}`,
+                        // numeroFactura: req.body.idNegocio
                     },
                     attachments: [
-                        { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+                        { filename: 'logo-final-portada.png', path: path_1.default.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
+                        { filename: 'docs.docx', path: path_1.default.resolve(__dirname, `../uploads/${rutaNegocio}`), cid: 'docsLegales' },
                     ]
                 };
                 transp.sendMail(mailOptions, (err, info) => {
@@ -162,7 +169,7 @@ negocio.post('/nuevoNegocio', (req, resp) => __awaiter(void 0, void 0, void 0, f
                         reject(objNegocioCreado);
                     }
                     else {
-                        resolve(info);
+                        // console.log(info);
                         objNegocioCreado.ok = true;
                         objNegocioCreado.mensaje = 'Negocio crado (Con notificación)';
                         objNegocioCreado.negocioDB = negocioDB;
@@ -216,7 +223,8 @@ negocio.get('/obtenerTodos', (req, resp) => {
 negocio.get('/getMultimediaAll', (req, resp) => {
     const pathPipe = req.query.multi;
     // const multimedia = path.resolve(`../uploads/${pathPipe}`);
-    const multimedia = path_1.default.resolve(__dirname, `../${pathPipe}`);
+    const multimedia = path_1.default.resolve(__dirname, `../uploads/${pathPipe}`);
+    // console.log(multimedia)
     return resp.sendFile(multimedia);
     // '../dist/uploads/6043f3fe57751d03f033beb2/6043f3fe57751d03f033beb2-336/portada.png'
 });
@@ -264,7 +272,7 @@ negocio.delete('/eliminarNegocio', (req, resp) => {
     // verificar si el usuario tiene archivos en uploads y borrarlos si los encuentra
     const promesaBorarArchivos = new Promise((resolve, reject) => {
         if (fs_1.default.existsSync(pathNegocio)) {
-            rimraf_1.default(`${pathNegocio}`, (err) => {
+            (0, rimraf_1.default)(`${pathNegocio}`, (err) => {
                 if (err) {
                     reject(`No se pudieron borrar los archivos`);
                 }
@@ -471,7 +479,7 @@ negocio.post('/contactoNegocio', (req, resp) => {
      */
     // return;
     const contactoInver = new Promise((resolve, reject) => {
-        const transp = nodemailer_1.createTransport({
+        const transp = (0, nodemailer_1.createTransport)({
             host: "smtp.titan.email",
             port: 465,
             secure: true,
@@ -488,7 +496,7 @@ negocio.post('/contactoNegocio', (req, resp) => {
                 extname: '.handlebars',
                 layoutsDir: path_1.default.resolve(__dirname, '../views/'),
                 defaultLayout: 'negocio',
-                partialsDir: path_1.default.resolve(__dirname, '../views/'),
+                partialsDir: path_1.default.resolve(__dirname, '../views/'), // location of your subtemplates aka. header, footer etc
             },
             viewPath: path_1.default.resolve(__dirname, '../views/'),
             extName: '.handlebars',
@@ -503,12 +511,12 @@ negocio.post('/contactoNegocio', (req, resp) => {
             template: 'negocio',
             context: {
                 correo: req.body.correoUsuario,
-                fecha: moment_1.default().format('l'),
+                fecha: (0, moment_1.default)().format('l'),
                 enlace: `https://cbwyn.com//#/negocio?id=${req.body.idNegocio}`,
                 numeroFactura: req.body.idNegocio
             },
             attachments: [
-                { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+                { filename: 'logo-final-portada.png', path: path_1.default.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
                 { filename: 'facebook.png', path: path_1.default.resolve(__dirname, '../assets/facebook.png'), cid: 'facebook' },
                 { filename: 'instagram.gif', path: path_1.default.resolve(__dirname, '../assets/instagram.png'), cid: 'instagram' },
                 { filename: 'twitter.png', path: path_1.default.resolve(__dirname, '../assets/twitter.png'), cid: 'twitter' },
@@ -549,7 +557,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
         mensaje: req.body.mensaje
     };
     // console.log(objetoCorreo);
-    const transp = nodemailer_1.createTransport({
+    const transp = (0, nodemailer_1.createTransport)({
         host: "smtp.titan.email",
         port: 465,
         secure: true,
@@ -566,7 +574,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
             extname: '.handlebars',
             layoutsDir: '../dist/views/',
             defaultLayout: 'contacto',
-            partialsDir: '../dist/views/',
+            partialsDir: '../dist/views/', // location of your subtemplates aka. header, footer etc
         },
         viewPath: '../dist/views/',
         extName: '.handlebars',
@@ -575,7 +583,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
     const mailOptions = {
         from: `noreply@cbwyn.com`,
         to: 'info@cbwyn.com',
-        // to: 'jomaromu2@gmail.com',
+        cc: 'jomaromu2@gmail.com',
         subject: `Mensaje desde cbwyn`,
         template: 'contacto',
         context: {
@@ -584,7 +592,7 @@ negocio.post('/contactoPlataforma', (req, resp) => {
             mensaje: objetoCorreo.mensaje,
         },
         attachments: [
-            { filename: 'logo-final-portada.png', path: '../dist/assets/logo-final-portada.png', cid: 'logo' },
+            { filename: 'logo-final-portada.png', path: path_1.default.resolve(__dirname, '../assets/logo-final-portada.png'), cid: 'logo' },
         ]
     };
     transp.sendMail(mailOptions, (err, info) => {

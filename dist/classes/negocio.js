@@ -23,12 +23,13 @@ class NegocioClass {
     transformaImgs(imgs, idUusuario) {
         const miliseconds = new Date().getMilliseconds();
         const pathLogo = path_1.default.resolve(__dirname, '../assets/logocbwyn.png');
-        const pathLogoPortada = path_1.default.resolve(__dirname, '../assets/logo-final-portada.png');
+        const pathLogoPortada = path_1.default.resolve(__dirname, '../assets/logocbwyn.png');
         const pathVideo = path_1.default.resolve(__dirname, '../assets/videocbwyn.mp4');
         const rutaUsuario = path_1.default.resolve(__dirname, `../uploads/${idUusuario}`);
         // const rutaNegocio = path.resolve(__dirname, `../uploads/${idUusuario}/${idUusuario}-${miliseconds}`);
         const rutanegocioCorta = `${idUusuario}-${miliseconds}`;
         const rutaNegocio = path_1.default.resolve(__dirname, `../uploads/${idUusuario}/${rutanegocioCorta}`);
+        console.log(pathLogoPortada);
         // logo
         const promesaLogo = new Promise((resolve, reject) => {
             if (!(imgs === null || imgs === void 0 ? void 0 : imgs.logo)) { // si no viene un logo
@@ -208,7 +209,7 @@ class NegocioClass {
             // cuando viene imagen y no es un array
             if (imgs.img !== undefined && imgs.img !== null && !Array.isArray(imgs.img)) {
                 if (!Array.isArray(imgs.img)) {
-                    console.log('no es un array');
+                    // console.log('no es un array');
                     // subir los logos
                     for (let i = 0; i < 3; i++) {
                         if (!fs_1.default.existsSync(rutaNegocio)) {
@@ -252,7 +253,7 @@ class NegocioClass {
             // cuando viene una imagen y es una array
             if (imgs.img !== undefined && imgs.img !== null && Array.isArray(imgs.img)) {
                 if (Array.isArray(imgs.img)) {
-                    console.log('es un array');
+                    // console.log('es un array');
                     for (let j = 0; j < 3; j++) {
                         // cuando alguna es undefined
                         if (imgs.img[j] === undefined) {
