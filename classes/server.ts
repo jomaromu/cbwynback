@@ -1,9 +1,12 @@
 import express from 'express';
 import socketIO from 'socket.io';
 import http from 'http';
+import https from 'https';
 import { objetoEnviroment } from '../global/enviroment';
 import { Socket } from 'socket.io';
 import { emitGetIds } from '../sockets/socket';
+import path from 'path';
+import fs from 'fs';
 
 // exportar clase
 export default class Server {
@@ -23,7 +26,11 @@ export default class Server {
 
         this.app = express(); // crear express
         this.port = objetoEnviroment.port;
-        this.httpServer = new http.Server(this.app); // crear el servidor
+        // this.httpServer = new http.Server(this.app); // crear el servidor
+        this.httpServer = https.createServer({
+            key: fs.readFileSync(path.join(__dirname, '../cert', 'key.pem')),
+            cert: fs.readFileSync(path.join(__dirname, '../cert', 'cert.pem')),
+        }, this.app) // crear el servidor
         this.cliente = [];
         // this.idClenSock = '';
 
