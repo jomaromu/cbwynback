@@ -1,19 +1,18 @@
-import Server from './classes/server';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import fileUpload from 'express-fileupload';
+import Server from "./classes/server";
+import bodyParser from "body-parser";
+import cors from "cors";
+import mongoose from "mongoose";
+import fileUpload from "express-fileupload";
 
-
-import { objetoEnviroment } from './global/enviroment';
+import { objetoEnviroment } from "./global/enviroment";
 
 // rutas
-import routerPrincipal from './routes/rutaPrincipal';
-import usuario from './routes/usuario';
-import negocio from './routes/negocio';
-import visa from './routes/visa';
+import routerPrincipal from "./routes/rutaPrincipal";
+import usuario from "./routes/usuario";
+import negocio from "./routes/negocio";
+import visa from "./routes/visa";
 
-// instancia del servidor 
+// instancia del servidor
 const server = Server.instance;
 
 // body parser
@@ -24,8 +23,15 @@ server.app.use(bodyParser.json());
 server.app.use(fileUpload());
 
 // cors
-server.app.use(cors({ origin: true, credentials: true }));
- 
+// server.app.use(cors({ origin: true, credentials: true }));
+server.app.use(
+  cors({
+    origin: "*",
+    methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+    optionsSuccessStatus: 200,
+  })
+);
+
 // conexion a base de datos
 // const uriDB = 'mongodb+srv://cybDB:12345678Mm&@cbwyndb-clouster.9tgic.mongodb.net/cybDB?retryWrites=true&w=majority';
 // mongoose.connect(uriDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
@@ -34,18 +40,27 @@ server.app.use(cors({ origin: true, credentials: true }));
 // });
 
 // conexion local
-mongoose.connect('mongodb://127.0.0.1:27017/cbyDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
+mongoose.connect(
+  "mongodb://127.0.0.1:27017/cbyDB",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  },
+  (err) => {
     if (err) throw err;
-    console.log('Base de datos Online');
-});
- 
+    console.log("Base de datos Online");
+  }
+);
+
 // usar las rutas
-server.app.use('/', routerPrincipal);
-server.app.use('/usuario', usuario);
-server.app.use('/negocio', negocio);
-server.app.use('/visa', visa);
+server.app.use("/", routerPrincipal);
+server.app.use("/usuario", usuario);
+server.app.use("/negocio", negocio);
+server.app.use("/visa", visa);
 
 // correr el servidor
 server.start(() => {
-    console.log(`Servidor corriendo en el puerto: ${objetoEnviroment.port}`);
+  console.log(`Servidor corriendo en el puerto: ${objetoEnviroment.port}`);
 });
