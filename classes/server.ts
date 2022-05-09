@@ -26,11 +26,11 @@ export default class Server {
 
         this.app = express(); // crear express
         this.port = objetoEnviroment.port;
-        // this.httpServer = new http.Server(this.app); // crear el servidor
-        this.httpServer = https.createServer({
-            key: fs.readFileSync(path.join(__dirname, '../cert', 'key.pem')),
-            cert: fs.readFileSync(path.join(__dirname, '../cert', 'cert.pem')),
-        }, this.app) // crear el servidor
+        this.httpServer = new http.Server(this.app); // crear el servidor
+        // this.httpServer = https.createServer({
+        //     key: fs.readFileSync(path.join(__dirname, '../cert', 'key.pem')),
+        //     cert: fs.readFileSync(path.join(__dirname, '../cert', 'cert.pem')),
+        // }, this.app) // crear el servidor
         this.cliente = [];
         // this.idClenSock = '';
 
